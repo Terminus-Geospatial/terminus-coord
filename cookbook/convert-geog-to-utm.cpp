@@ -8,36 +8,33 @@
 /*                                                                                    */
 /**************************** INTELLECTUAL PROPERTY RIGHTS ****************************/
 /**
- * @file    KeyType.hpp
+ * @file    convert-geog-to-utm.cpp
  * @author  Marvin Smith
  * @date    01/09/2025
  */
-#pragma once
 
-// C++ Standard Libraries
-#include <string>
+// Terminus Libraries
+#include <terminus/coord.hpp>
+#include <terminus/log.hpp>
 
-namespace tmns::coord {
+namespace crd = tmns::coord;
 
-/**
- * Key-Type
- */
-enum class KeyType {
-    UNKNOWN         = 0,
-    COORDINATE_TYPE = 1,
-    EPSG_CODE       = 2,
-    GRID_ZONE       = 3 /**< Used for global mercator-style projections such as UTM, UPS, and USNG */,
-}; // End of KeyType enumeration
+int main( int argc, char* argv[] )
+{
+
+    // Create a Geographic Coordinate
+    auto lla_coord = crd::Geographic::create( -104.5, 38.9, 123.0 );
+
+    auto xform = crd::Transformer::create( crd::CoordinateType::UTM,
+                                           { crd::Param( crd::KeyType::GRID_ZONE, 13 ) } );
+    
+    if( xform.has_error() ){
+        tmns::log::error( "Problem creating Transformer instance: ", xform.error().message() );
+        return 1;
+    }
+    
+    // Convert a single coordinate to UTM
+    auto utm_coord = xform.value().convert( lla_coord );
 
 
-/**
- * Convert KeyType to String
- */
-std::string to_string( KeyType tp );
-
-/**
- * Convert String to KeyType
- */
-KeyType to_keytype( const std::string& tp );
-
-} // End of tmns::coord namespace
+}

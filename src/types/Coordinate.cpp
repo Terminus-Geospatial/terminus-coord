@@ -37,7 +37,7 @@ CoordinateType  Coordinate::coordinate_type() const {
 /*****************************************/
 /*      Print to Log-Friendly String     */
 /*****************************************/
-std::string Coordinate::to_log_string( size_t offset = 0 ) const 
+std::string Coordinate::to_log_string( size_t offset ) const 
 {
     std::string gap( offset, ' ' );
     std::stringstream sout;
@@ -45,6 +45,17 @@ std::string Coordinate::to_log_string( size_t offset = 0 ) const
     sout << gap << "  - type: " << to_string( m_type );
 
     return sout.str();
+}
+
+/************************************************/
+/*      Return the coordinate as a kvp map      */
+/************************************************/
+std::map<std::string,std::string> Coordinate::as_map() const
+{
+    std::map<std::string,std::string> kvp;
+    kvp["COORDINATE_TYPE"] = to_string( coordinate_type() );
+
+    return kvp;
 }
 
 } // End of tmns::coord namespace

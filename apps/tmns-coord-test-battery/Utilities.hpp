@@ -8,36 +8,24 @@
 /*                                                                                    */
 /**************************** INTELLECTUAL PROPERTY RIGHTS ****************************/
 /**
- * @file    KeyType.hpp
+ * @file    Utilities.hpp
  * @author  Marvin Smith
- * @date    01/09/2025
+ * @date    01/10/2025
  */
 #pragma once
 
-// C++ Standard Libraries
+// C++ Libraries
 #include <string>
 
-namespace tmns::coord {
+// Terminus Libraries
+#include <terminus/core/error/ErrorCategory.hpp>
+
+namespace tmns {
 
 /**
- * Key-Type
+ * Convert date and time to string
  */
-enum class KeyType {
-    UNKNOWN         = 0,
-    COORDINATE_TYPE = 1,
-    EPSG_CODE       = 2,
-    GRID_ZONE       = 3 /**< Used for global mercator-style projections such as UTM, UPS, and USNG */,
-}; // End of KeyType enumeration
+Result<std::string> date_to_string();
 
 
-/**
- * Convert KeyType to String
- */
-std::string to_string( KeyType tp );
-
-/**
- * Convert String to KeyType
- */
-KeyType to_keytype( const std::string& tp );
-
-} // End of tmns::coord namespace
+} // End of tmns namespace

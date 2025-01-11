@@ -14,12 +14,15 @@
  */
 #pragma once
 
+// Terminus Libraries
+#include <terminus/coord/types/Coordinate.hpp>
+
 namespace tmns::coord {
 
 /**
  * @class Cartesian
  */
-class Cartesian
+class Cartesian : public Coordinate
 {
     public:
 

@@ -8,36 +8,30 @@
 /*                                                                                    */
 /**************************** INTELLECTUAL PROPERTY RIGHTS ****************************/
 /**
- * @file    Spherical.hpp
+ * @file    main.cpp
  * @author  Marvin Smith
  * @date    01/08/2025
  */
-#pragma once
 
 // Terminus C++ Libraries
-#include <terminus/coord/types/Coordinate.hpp>
+#include <terminus/coord/utilities/Builder.hpp>
 
-namespace tmns::coord {
+// Project Libraries
+#include "proj/UTM.hpp"
+#include "Options.hpp"
 
-/**
- * @class Spherical
- * 
- * Defines spherical coordinates with 3 components
- */
-class Spherical : public Coordinate
-{
-    public:
 
-        /**
-         * Get the coordinate type
-         */
-        inline CoordinateType coordinate_type() const override {
-            return CoordinateType::SPHERICAL;
-        }
-        
+int main( int argc, char* argv[], char* envp[] ) {
 
-    private:
+    auto options = tmns::Options::parse_command_line( argc, argv, envp );
 
-};// End of Spherical class
+    std::stringstream sout;
 
-} // End of tmns::coord namespace
+    // Run Proj Tests
+    sout << tmns::proj::run_geographic_to_geographic_battery( options.get_csv_path( tmns::CSV_Type::GEOGRAPHIC_TO_GEOGRAPHIC ) ) << std::endl;
+    sout << tmns::proj::run_geographic_to_utm_battery( options.get_csv_path( tmns::CSV_Type::GEOGRAPHIC_TO_UTM ) ) << std::endl;
+    sout << tmns::proj::run_utm_to_geographic_battery( options.get_csv_path( tmns::CSV_Type::UTM_TO_GEOGRAPHIC ) ) << std::endl;
+    sout << tmns::proj::run_utm_to_utm_battery( options.get_csv_path( tmns::CSV_Type::UTM_TO_GEOGRAPHIC ) ) << std::endl;
+
+    return 0;
+}

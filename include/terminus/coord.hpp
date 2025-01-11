@@ -15,5 +15,8 @@
 #pragma once
 
 // Terminus Coordinate APIs
+#include <terminus/coord/types/Geographic.hpp>
+#include <terminus/coord/types/UTM.hpp>
+#include <terminus/coord/xform/Transformer.hpp>
 
 

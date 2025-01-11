@@ -8,36 +8,43 @@
 /*                                                                                    */
 /**************************** INTELLECTUAL PROPERTY RIGHTS ****************************/
 /**
- * @file    KeyType.hpp
+ * @file    UTM.cpp
  * @author  Marvin Smith
- * @date    01/09/2025
+ * @date    01/08/2025
  */
-#pragma once
+#include "UTM.hpp"
 
-// C++ Standard Libraries
-#include <string>
+namespace tmns::proj {
 
-namespace tmns::coord {
+/************************************************/
+/*           Run the LLa to UTM Battery         */
+/************************************************/
+std::string run_geographic_to_utm_battery( std::filesystem::path csv_path )
+{
 
-/**
- * Key-Type
- */
-enum class KeyType {
-    UNKNOWN         = 0,
-    COORDINATE_TYPE = 1,
-    EPSG_CODE       = 2,
-    GRID_ZONE       = 3 /**< Used for global mercator-style projections such as UTM, UPS, and USNG */,
-}; // End of KeyType enumeration
+    
 
 
-/**
- * Convert KeyType to String
- */
-std::string to_string( KeyType tp );
+}
 
-/**
- * Convert String to KeyType
- */
-KeyType to_keytype( const std::string& tp );
+/************************************************/
+/*           Run the UTM to LLA Battery         */
+/************************************************/
+std::string run_geographic_to_utm_battery( std::filesystem::path csv_path )
+{
 
-} // End of tmns::coord namespace
+
+
+}
+
+/************************************************/
+/*           Run the UTM to UTM Battery         */
+/************************************************/
+std::string run_utm_to_utm_battery( std::filesystem::path csv_path )
+{
+
+
+
+}
+
+} // End of tmns::proj namespace

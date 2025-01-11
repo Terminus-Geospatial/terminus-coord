@@ -22,16 +22,17 @@ namespace tmns::coord {
 /**
  * @enum CoordinateType
  */
-enum CoordinateType
+enum class CoordinateType
 {
     UNKNOWN    = 0 /**< This should be an error condition. */,
     BASE       = 1 /**< This should be an error condition. */,
     CARTESIAN  = 2 /**< Standard Projection-Less 3-dimensional coordinate */,
-    SPHERICAL  = 3 /**< Spherical Coordinate System. */,
-    GEOGRAPHIC = 4 /**< Spherical coordinate */,
-    GEOCENTRIC = 5 /**< Earth-Centric */,
-    ECEF       = 6 /**< Earth-Centered, Earth-Fixed */,
-
+    GEOGRAPHIC = 3 /**< Spherical coordinate */,
+    GEOCENTRIC = 4 /**< Earth-Centric */,
+    ECEF       = 4 /**< Earth-Centered, Earth-Fixed */,
+    SPHERICAL  = 5 /**< Spherical Coordinate System. */,
+    TRANS_MERC = 6 /**< Transverse Mercator */,
+    UTM        = 7 /**< Universal Transverse Mercator */,
 };// End of CoordinateType enumeration
 
 /**

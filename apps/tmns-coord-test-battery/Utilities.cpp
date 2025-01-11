@@ -8,36 +8,35 @@
 /*                                                                                    */
 /**************************** INTELLECTUAL PROPERTY RIGHTS ****************************/
 /**
- * @file    KeyType.hpp
+ * @file    Utilities.cpp
  * @author  Marvin Smith
- * @date    01/09/2025
+ * @date    01/12/2025
  */
-#pragma once
+#include "Utilities.hpp"
 
-// C++ Standard Libraries
-#include <string>
+// C++ Libraries
+#include <chrono>
+#include <format>
 
-namespace tmns::coord {
+namespace tmns {
 
-/**
- * Key-Type
- */
-enum class KeyType {
-    UNKNOWN         = 0,
-    COORDINATE_TYPE = 1,
-    EPSG_CODE       = 2,
-    GRID_ZONE       = 3 /**< Used for global mercator-style projections such as UTM, UPS, and USNG */,
-}; // End of KeyType enumeration
+/************************************************/
+/*      Convert Time to Formatted String        */
+/************************************************/
+Result<std::string> date_to_string()
+{
+    // Get the current time 
+    auto now = std::chrono::system_clock::now(); 
+    
+    // Convert to time_t to get calendar time 
+    auto t = std::chrono::system_clock::to_time_t(now); 
+    
+    // Convert to tm struct for local time 
+    std::tm local_time = *std::localtime(&t); 
+    
+    // Use std::format to format the current date 
+    std::string formatted_date = std::format("{:%Y-%m-%d}", local_time); 
+    return outcome::ok<std::string>( formatted_date );
+}
 
-
-/**
- * Convert KeyType to String
- */
-std::string to_string( KeyType tp );
-
-/**
- * Convert String to KeyType
- */
-KeyType to_keytype( const std::string& tp );
-
-} // End of tmns::coord namespace
+} // End of tmns namespace

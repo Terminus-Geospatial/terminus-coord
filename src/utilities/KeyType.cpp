@@ -30,6 +30,8 @@ std::string to_string( KeyType kp ){
             return "COORDINATE_TYPE";
         case KeyType::EPSG_CODE:
             return "EPSG_CODE";
+        case KeyType::GRID_ZONE:
+            return "GRID_ZONE";
         default:
             return "UNKNOWN";
     }
@@ -50,6 +52,10 @@ KeyType to_keytype( const std::string& tp )
 
     if( tp_lower == "epsg_code" ){
         return KeyType::EPSG_CODE;
+    }
+
+    if( tp_lower == "grid_zone" ){
+        return KeyType::GRID_ZONE;
     }
 
     return KeyType::UNKNOWN;

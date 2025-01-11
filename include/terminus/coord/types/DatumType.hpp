@@ -8,7 +8,7 @@
 /*                                                                                    */
 /**************************** INTELLECTUAL PROPERTY RIGHTS ****************************/
 /**
- * @file    KeyType.hpp
+ * @file    DatumType.hpp
  * @author  Marvin Smith
  * @date    01/09/2025
  */
@@ -19,25 +19,21 @@
 
 namespace tmns::coord {
 
-/**
- * Key-Type
- */
-enum class KeyType {
-    UNKNOWN         = 0,
-    COORDINATE_TYPE = 1,
-    EPSG_CODE       = 2,
-    GRID_ZONE       = 3 /**< Used for global mercator-style projections such as UTM, UPS, and USNG */,
-}; // End of KeyType enumeration
-
+enum class DatumType {
+    NAD_27 /**< North American Datum, 1927 */,
+    NAD_83 /**< North American Datum, 1983 */,
+    WGS_72 /**< World Geodetic System, 1972 */,
+    WGS_84 /**< World Geodetic System, 1986 */,
+}; // End of DatumType class
 
 /**
- * Convert KeyType to String
+ * Convert DatumType to string
  */
-std::string to_string( KeyType tp );
+std::string to_string( DatumType tp );
 
 /**
- * Convert String to KeyType
+ * Convert string to DatumType
  */
-KeyType to_keytype( const std::string& tp );
+DatumType to_datumtype( const std::string& tp );
 
 } // End of tmns::coord namespace

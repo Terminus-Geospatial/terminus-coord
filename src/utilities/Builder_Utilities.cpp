@@ -48,7 +48,8 @@ Result<CoordinateType> find_coordinate_type( const std::map<KeyType,std::string>
         }
     }
 
-
+    return tmns::outcome::fail( core::error::ErrorCode::NOT_FOUND,
+                                "No key available to determine Coordinate-Type" );
 }
 
 } // End of tmns::coord::build namespace

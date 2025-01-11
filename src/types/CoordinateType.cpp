@@ -33,12 +33,14 @@ std::string to_string( CoordinateType tp )
             return "CARTESIAN";
         case CoordinateType::ECEF:
             return "ECEF";
-        case CoordinateType::GEOCENTRIC:
-            return "GEOCENTRIC";
         case CoordinateType::GEOGRAPHIC:
             return "GEOGRAPHIC";
         case CoordinateType::SPHERICAL:
             return "SPHERICAL";
+        case CoordinateType::TRANS_MERC:
+            return "TRANS_MERC";
+        case CoordinateType::UTM:
+            return "UTM";
         default:
             return "UNKNOWN";
     }
@@ -79,6 +81,16 @@ CoordinateType to_coordinate_type( const std::string& tp )
     // Spherical
     if( tp_lower == "spherical" ){
         return CoordinateType::SPHERICAL;
+    }
+
+    // Transverse Mercator
+    if( tp_lower == "trans_merc" ){
+        return CoordinateType::TRANS_MERC;
+    }
+
+    // UTM
+    if( tp_lower == "utm" ){
+        return CoordinateType::UTM;
     }
 
     // Otherwise

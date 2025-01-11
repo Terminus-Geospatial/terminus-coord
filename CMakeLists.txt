@@ -60,6 +60,8 @@ include_directories( include )
 
 add_subdirectory( apps )
 
+add_subdirectory( cookbook )
+
 #------------------------------------------------------#
 #-          Construct the Coordinate Library          -#
 #----------------------------------------------------#
@@ -67,14 +69,25 @@ add_library( ${PROJECT_NAME} SHARED
     include/terminus/coord/types/Cartesian.hpp
     include/terminus/coord/types/Coordinate.hpp
     include/terminus/coord/types/CoordinateType.hpp
+    include/terminus/coord/types/Datum.hpp
+    include/terminus/coord/types/DatumType.hpp
+    include/terminus/coord/types/Geographic.hpp
     include/terminus/coord/types/Spherical.hpp
+    include/terminus/coord/types/TransverseMercator.hpp
+    include/terminus/coord/types/UTM.hpp
     include/terminus/coord/utilities/Builder.hpp
     include/terminus/coord/utilities/Builder_Utilities.hpp
     include/terminus/coord/utilities/EPSG_Utilities.hpp
     include/terminus/coord/utilities/KeyType.hpp
     src/types/Cartesian.cpp
+    src/types/Coordinate.cpp
     src/types/CoordinateType.cpp
+    src/types/Datum.cpp
+    src/types/DatumType.cpp
+    src/types/Geographic.cpp
     src/types/Spherical.cpp
+    src/types/TransverseMercator.cpp
+    src/types/UTM.cpp
     src/utilities/Builder.cpp
     src/utilities/Builder_Utilities.cpp
     src/utilities/EPSG_Utilities.cpp

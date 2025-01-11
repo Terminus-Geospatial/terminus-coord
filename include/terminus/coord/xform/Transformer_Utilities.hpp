@@ -8,36 +8,33 @@
 /*                                                                                    */
 /**************************** INTELLECTUAL PROPERTY RIGHTS ****************************/
 /**
- * @file    KeyType.hpp
+ * @file    Transformer.hpp
  * @author  Marvin Smith
- * @date    01/09/2025
+ * @date    01/10/2025
  */
 #pragma once
 
+// Terminus Libraries
+#include <terminus/coord/utilities/KeyType.hpp>
+
 // C++ Standard Libraries
-#include <string>
+#include <tuple>
 
 namespace tmns::coord {
 
-/**
- * Key-Type
- */
-enum class KeyType {
-    UNKNOWN         = 0,
-    COORDINATE_TYPE = 1,
-    EPSG_CODE       = 2,
-    GRID_ZONE       = 3 /**< Used for global mercator-style projections such as UTM, UPS, and USNG */,
-}; // End of KeyType enumeration
+using XFORM_PARAM = std::tuple<KeyType,std::string>;
 
+template <typename ArgType>
+XFORM_PARAM Param( KeyType kt, const ArgType& arg )
+{
+    return std::make_tuple( kt, std::to_string( arg ) );
+}
 
-/**
- * Convert KeyType to String
- */
-std::string to_string( KeyType tp );
+template <>
+XFORM_PARAM Param( KeyType kt, const std::string& arg )
+{
+    return std::make_tuple( kt, arg );
+}
 
-/**
- * Convert String to KeyType
- */
-KeyType to_keytype( const std::string& tp );
 
 } // End of tmns::coord namespace

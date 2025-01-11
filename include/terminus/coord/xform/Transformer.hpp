@@ -8,36 +8,35 @@
 /*                                                                                    */
 /**************************** INTELLECTUAL PROPERTY RIGHTS ****************************/
 /**
- * @file    KeyType.hpp
+ * @file    Transformer.hpp
  * @author  Marvin Smith
- * @date    01/09/2025
+ * @date    01/10/2025
  */
 #pragma once
 
+// Terminus Libraries
+#include <terminus/coord/xform/Transformer_Utilities.hpp>
+#include <terminus/core/error/ErrorCategory.hpp>
+
 // C++ Standard Libraries
-#include <string>
+#include <initializer_list>
 
 namespace tmns::coord {
 
 /**
- * Key-Type
+ * Executes all coordinate conversion calls
  */
-enum class KeyType {
-    UNKNOWN         = 0,
-    COORDINATE_TYPE = 1,
-    EPSG_CODE       = 2,
-    GRID_ZONE       = 3 /**< Used for global mercator-style projections such as UTM, UPS, and USNG */,
-}; // End of KeyType enumeration
+class Transformer
+{
+    public:
+
+        static Result<Transformer> create( CoordinateType                     dest_cs,
+                                           std::initializer_list<XFORM_PARAM> args );
+
+    private:
 
 
-/**
- * Convert KeyType to String
- */
-std::string to_string( KeyType tp );
+}; // End of Transformer Class
 
-/**
- * Convert String to KeyType
- */
-KeyType to_keytype( const std::string& tp );
 
 } // End of tmns::coord namespace
