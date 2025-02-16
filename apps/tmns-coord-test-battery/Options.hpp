@@ -21,14 +21,17 @@
 
 // Terminus Libraries
 #include <terminus/coord/utilities/KeyType.hpp>
+#include <terminus/core/error/ErrorCategory.hpp>
 
 namespace tmns {
 
 enum class CSV_Type {
     GEOGRAPHIC_TO_GEOGRAPHIC = 1,
-    GEOGRAPHIC_TO_UTM        = 2,
-    UTM_TO_GEOGRAPHIC        = 3,
-    UTM_TO_UTM               = 4,
+    GEOGRAPHIC_TO_UPS        = 2,
+    GEOGRAPHIC_TO_UTM        = 3,
+    UPS_TO_GEOGRAPHIC        = 4,
+    UTM_TO_GEOGRAPHIC        = 5,
+    UTM_TO_UTM               = 6,
 }; // End of CSV_Type enum
 
 /**
@@ -58,9 +61,22 @@ class Options
 
     private:
 
-        void parse_toml( std::filesystem::path toml_path );
+        /**
+         * Parse TOML Configuration File
+         * @param toml_path 
+         */
+        Result<void> parse_toml( std::filesystem::path toml_path );
 
+        /**
+         * Write a new config-file to disk.
+         */
         static void write_toml( std::filesystem::path toml_path );
+
+        /// Path to toml file
+        std::optional<std::filesystem::path> m_config_path;
+
+        /// CSV Paths
+        std::map<CSV_Type,std::filesystem::path> m_csv_paths;
 
 };// End of Options class
 

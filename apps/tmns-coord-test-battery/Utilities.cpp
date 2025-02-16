@@ -35,7 +35,7 @@ Result<std::string> date_to_string()
     std::tm local_time = *std::localtime(&t); 
     
     // Use std::format to format the current date 
-    std::string formatted_date = std::format("{:%Y-%m-%d}", local_time); 
+    std::string formatted_date = std::format( "{:%Y-%m-%d}", local_time ); 
     return outcome::ok<std::string>( formatted_date );
 }
 

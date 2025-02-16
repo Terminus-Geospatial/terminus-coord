@@ -16,7 +16,11 @@
 
 // C++ Standard Libraries
 #include <deque>
+#include <sstream>
 #include <string>
+
+// Toml++
+#include <toml++/toml.h>
 
 // Terminus Libraries
 #include <terminus/log.hpp>
@@ -55,6 +59,8 @@ Options Options::parse_command_line( int argc, char* argv[], char* envp[] )
         args.push_back( argv[i] );
     }
 
+    bool gen_config = false;
+
     while( !args.empty() )
     {
         // Fetch next argument
@@ -67,19 +73,93 @@ Options Options::parse_command_line( int argc, char* argv[], char* envp[] )
             std::exit(0);
         }
 
+        // Check config path
+        else if( arg == "-c" || arg == "--config" ){
+            options.m_config_path = args.front();
+            args.pop_front();
+        }
+
+        // Generate config
+        else if( arg == "-g" || arg == "--gen-config" ){
+            gen_config = true;
+        }
+
+        // Otherwise, error
+        else {
+            tmns::log::error( "Unsupported argument: ", arg );
+            options.usage();
+            std::exit(1);
+        }
+
+    }
+
+    // Make sure user specified config
+    if( !options.m_config_path ){
+        tmns::log::error( "No config path specified." );
+        options.usage();
+        std::exit(1);
+    }
+
+    // Check if use specified to generate config
+    if( gen_config ){
+        write_toml( *options.m_config_path );
+        std::exit(0);
+    }
+
+    // Parse config
+    auto res = options.parse_toml( *options.m_config_path );
+    if( res.has_error() ){
+        tmns::log::error( "Unable to parse config file. ", res.error().message() );
+        std::exit(1);
     }
 
 
     return options;
 }
 
+/**********************************************/
+/*            Get the CSV Pathname            */
+/**********************************************/
+std::optional<std::filesystem::path> Options::get_csv_path( CSV_Type tp ) const
+{
+    if( m_csv_paths.find( tp ) == m_csv_paths.end() ){
+        return {};
+    }
+    return { m_csv_paths.find( tp )->second };
+}
+
 /****************************************************/
 /*          Parse the TOML Configuration File       */
 /****************************************************/
-void parse_toml( std::filesystem::path toml_path )
+Result<void> Options::parse_toml( std::filesystem::path toml_path )
 {
-    
+    // Parse the file
+    std::ifstream fin( toml_path );
+    if( !fin.good() ){
+        return tmns::outcome::fail( core::error::ErrorCode::FILE_IO_ERROR,
+                                    "Unable to open file." );
+    }
 
+    // Pass to TOML API
+    auto data = toml::parse( fin );
+
+    // Fetch the various blocks
+    const std::map<CSV_Type,std::string> keys { { CSV_Type::GEOGRAPHIC_TO_GEOGRAPHIC, "proj_geographic_to_geographic" },
+                                                { CSV_Type::GEOGRAPHIC_TO_UPS,        "proj_geographic_to_ups" },
+                                                { CSV_Type::GEOGRAPHIC_TO_UTM,        "proj_geographic_to_utm" },
+                                                { CSV_Type::UPS_TO_GEOGRAPHIC,        "proj_ups_to_geographic" },
+                                                { CSV_Type::UTM_TO_GEOGRAPHIC,        "proj_utm_to_geographic" },
+                                                { CSV_Type::UTM_TO_UTM,               "proj_utm_to_utm" } };
+
+    // Iterate over the list of keys
+    for( const auto& pr : keys )
+    {
+        // Parse the block
+        auto vals = data[pr.second];
+
+    }
+
+    return tmns::outcome::ok();
 }
 
 /********************************/
@@ -92,7 +172,7 @@ void Options::write_toml( std::filesystem::path toml_path )
 
     fout << "#" << std::endl;
     fout << "#    File:    " << toml_path.filename().native() << std::endl;
-    fout << "#    Date:    " << date_to_string() << std::endl;
+    fout << "#    Date:    " << date_to_string().value() << std::endl;
     fout << "#" << std::endl;
     fout << std::endl;
 

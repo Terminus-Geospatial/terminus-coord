@@ -132,7 +132,7 @@ def get_elevation( logger, lat, lon ):
     logger.debug( f'url request: {url}' )
     
     response = requests.get( url )
-    time.sleep( 0.2 )
+    #time.sleep( 0.01 )
 
     if response.status_code == 200:
         logging.debug( f'Response: {response.text}' )
@@ -207,19 +207,14 @@ def convert_geographic_to_geographic( coord, in_datum, out_datum ):
 
     return xform.transform( coord[0], coord[1], coord[2] )
 
-def write_geographic_to_geographic_single( fout, in_crs, out_crs, coord_list ):
+def convert_geographic_to_utm( coord, in_datum, out_datum, gz ):
 
-    #  Iterate over each coordinate
-    for idx in range( 0, len( coord_list[in_crs ] ) ):
+    crs_in  = CRS.from_epsg( Datum.to_epsg( in_datum ) )
+    crs_out = CRS( proj = 'utm', zone = gz, datum = Datum.to_proj_str( out_datum ) )
 
-        #  Get the coordinates
-        crd_in  = coord_list[in_crs][idx]
-        crd_out = coord_list[out_crs][idx]
+    xform = Transformer.from_crs( crs_from=crs_in, crs_to=crs_out )
 
-        #  Write to CSV
-        fout.write( f'{Datum.to_epsg(in_crs)},{Datum.to_proj_str(in_crs)},{crd_in[1]:.6f},{crd_in[0]:.6f},{crd_in[2]:.2f},')
-        fout.write( f'{Datum.to_epsg(out_crs)},{Datum.to_proj_str(out_crs)},{crd_out[1]:.6f},{crd_out[0]:.6f},{crd_out[2]:.2f}')
-        fout.write('\n') #  DO NOT FORGET NEWLINE!
+    return xform.transform( coord[0], coord[1], coord[2] )
 
 def write_geographic_to_geographic_single( fout, in_crs, out_crs, coord_list ):
 
@@ -234,6 +229,28 @@ def write_geographic_to_geographic_single( fout, in_crs, out_crs, coord_list ):
         fout.write( f'{Datum.to_epsg(in_crs)},{Datum.to_proj_str(in_crs)},{crd_in[1]:.6f},{crd_in[0]:.6f},{crd_in[2]:.2f},')
         fout.write( f'{Datum.to_epsg(out_crs)},{Datum.to_proj_str(out_crs)},{crd_out[1]:.6f},{crd_out[0]:.6f},{crd_out[2]:.2f}')
         fout.write('\n') #  DO NOT FORGET NEWLINE!
+
+def write_geographic_to_utm_single( g2u_fout, u2g_fout, in_crs, out_crs, coord_list, gz ):
+
+    #  Iterate over each coordinate
+    for idx in range( 0, len( coord_list[in_crs ] ) ):
+
+        #  Get the coordinates
+        crd_in  = coord_list[in_crs][idx]
+
+        #  Convert to UTM
+        crd_out = convert_geographic_to_utm( crd_in, in_crs, out_crs, gz )
+        
+        #  Write Geographic to UTM to CSV
+        g2u_fout.write( f'{Datum.to_epsg(in_crs)},{Datum.to_proj_str(in_crs)},{crd_in[1]:.6f},{crd_in[0]:.6f},{crd_in[2]:.2f},')
+        g2u_fout.write( f'{Datum.to_epsg(out_crs)},{Datum.to_proj_str(out_crs)},{gz},{crd_out[0]:.6f},{crd_out[1]:.6f},{crd_out[2]:.2f}')
+        g2u_fout.write('\n') #  DO NOT FORGET NEWLINE!
+
+        #  Write UTM to Geographic to CSV
+        u2g_fout.write( f'{Datum.to_epsg(out_crs)},{Datum.to_proj_str(out_crs)},{gz},{crd_out[0]:.6f},{crd_out[1]:.6f},{crd_out[2]:.2f}')
+        u2g_fout.write( f'{Datum.to_epsg(in_crs)},{Datum.to_proj_str(in_crs)},{crd_in[1]:.6f},{crd_in[0]:.6f},{crd_in[2]:.2f},')
+        u2g_fout.write('\n') #  DO NOT FORGET NEWLINE!
+
 
 def write_geographic_to_geographic( fout, coord_list ):
 
@@ -253,23 +270,24 @@ def write_geographic_to_geographic( fout, coord_list ):
     write_geographic_to_geographic_single( fout, Datum.WGS_84, Datum.NAD_83, coord_list )
     write_geographic_to_geographic_single( fout, Datum.WGS_84, Datum.WGS_72, coord_list )
 
-def write_geographic_to_utm( fout, coord_list ):
+def write_geographic_to_utm( g2u_fout, u2g_fout, coord_list, gz ):
 
-    write_geographic_to_utm_single( fout, Datum.NAD_27, Datum.NAD_83, coord_list )
-    write_geographic_to_utm_single( fout, Datum.NAD_27, Datum.WGS_72, coord_list )
-    write_geographic_to_utm_single( fout, Datum.NAD_27, Datum.WGS_84, coord_list )
+    write_geographic_to_utm_single( g2u_fout, u2g_fout, Datum.NAD_27, Datum.NAD_83, coord_list, gz )
+    write_geographic_to_utm_single( g2u_fout, u2g_fout, Datum.NAD_27, Datum.WGS_72, coord_list, gz )
+    write_geographic_to_utm_single( g2u_fout, u2g_fout, Datum.NAD_27, Datum.WGS_84, coord_list, gz )
 
-    write_geographic_to_utm_single( fout, Datum.NAD_83, Datum.NAD_27, coord_list )
-    write_geographic_to_utm_single( fout, Datum.NAD_83, Datum.WGS_72, coord_list )
-    write_geographic_to_utm_single( fout, Datum.NAD_83, Datum.WGS_84, coord_list )
+    write_geographic_to_utm_single( g2u_fout, u2g_fout, Datum.NAD_83, Datum.NAD_27, coord_list, gz )
+    write_geographic_to_utm_single( g2u_fout, u2g_fout, Datum.NAD_83, Datum.WGS_72, coord_list, gz )
+    write_geographic_to_utm_single( g2u_fout, u2g_fout, Datum.NAD_83, Datum.WGS_84, coord_list, gz )
 
-    write_geographic_to_utm_single( fout, Datum.WGS_72, Datum.NAD_27, coord_list )
-    write_geographic_to_utm_single( fout, Datum.WGS_72, Datum.NAD_83, coord_list )
-    write_geographic_to_utm_single( fout, Datum.WGS_72, Datum.WGS_84, coord_list )
+    write_geographic_to_utm_single( g2u_fout, u2g_fout, Datum.WGS_72, Datum.NAD_27, coord_list, gz )
+    write_geographic_to_utm_single( g2u_fout, u2g_fout, Datum.WGS_72, Datum.NAD_83, coord_list, gz )
+    write_geographic_to_utm_single( g2u_fout, u2g_fout, Datum.WGS_72, Datum.WGS_84, coord_list, gz )
 
-    write_geographic_to_utm_single( fout, Datum.WGS_84, Datum.NAD_27, coord_list )
-    write_geographic_to_utm_single( fout, Datum.WGS_84, Datum.NAD_83, coord_list )
-    write_geographic_to_utm_single( fout, Datum.WGS_84, Datum.WGS_72, coord_list )
+    write_geographic_to_utm_single( g2u_fout, u2g_fout, Datum.WGS_84, Datum.NAD_27, coord_list, gz )
+    write_geographic_to_utm_single( g2u_fout, u2g_fout, Datum.WGS_84, Datum.NAD_83, coord_list, gz )
+    write_geographic_to_utm_single( g2u_fout, u2g_fout, Datum.WGS_84, Datum.WGS_72, coord_list, gz )
+
 
 def main():
 
@@ -297,7 +315,7 @@ def main():
     g2g_fout.write( 'epsg_in,datum_in,lon_deg_in,lat_deg_in,elev_m_in,epsg_out,datum_out,lon_deg_out,lat_deg_out,elev_m_out\n')
 
     g2u_fout = open( 'proj_geographic_2_utm.csv', 'w' )
-    g2u_fout.write( 'epsg_in,epsg_out,datum,lon_deg,lat_deg,elev_m,datum,gz,easting_m,northing_m,elev_m\n' )
+    g2u_fout.write( 'epsg_in,datum_in,lon_deg_in,lat_deg_in,elev_m_in,epsg_out,datum_out,gz_out,easting_m_out,northing_m_out,elev_m_out\n' )
 
     u2g_fout = open( 'proj_utm_2_geographic.csv', 'w' )
     u2g_fout.write( 'epsg_in,epsg_out,datum,gz,easting_m,northing_m,elev_m,datumlon_deg,lat_deg,elev_m\n' )
@@ -334,7 +352,7 @@ def main():
         write_geographic_to_geographic( g2g_fout, ref_coords )
 
         #  Perform Geographic to UTM Transforms
-        write_geographic_to_utm( g2u_fout, ref_coords )
+        write_geographic_to_utm( g2u_fout, u2g_fout, ref_coords, gz )
         
 
         #  Write Entries

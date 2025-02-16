@@ -45,9 +45,14 @@ add_definitions( -DBOOST_ALL_DYN_LINK )
 find_package( Boost REQUIRED )
 include_directories( ${Boost_INCLUDE_DIRS} )
 
+# Find TOML++
+find_package( tomlplusplus REQUIRED )
+message( STATUS "tomplplusplus_FOUND: ${tomplplusplus_FOUND}")
+message( STATUS "tomlplusplus_INCLUDE_DIRS: ${tomlplusplus_INCLUDE_DIRS}")
+include_directories( ${tomlplusplus_INCLUDE_DIRS} )
+
 #  Bring in Terminus Libraries
 find_package( terminus_core    REQUIRED )
-message( "terminus_core_FOUND: ${terminus_core_FOUND}" )
 find_package( terminus_log     REQUIRED )
 find_package( terminus_outcome REQUIRED )
 find_package( terminus_math    REQUIRED )
